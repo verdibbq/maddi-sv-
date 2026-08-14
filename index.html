@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maddi - Servidor PVP</title>
+    <!-- Enlace al archivo CSS externo -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- Fuentes de Google -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <!-- Iconos FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- FONDO DINÁMICO DE GUERRA (CSS + JS Control) -->
+    <div id="war-background"></div>
+    <div id="overlay"></div>
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- NAVBAR -->
+    <nav>
+        <div class="nav-brand">
+            <img src="img/logo.jpeg" alt="Logo Maddi" class="nav-logo">
+            <h1>Maddi</h1>
+        </div>
+        <div class="nav-links">
+            <a href="#hero">Inicio</a>
+            <a href="#fullpvp">Modalidad</a>
+            <a href="pages/foro.html">Foro</a>
+            <a href="pages/ayuda.html">Ayuda</a>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section id="hero">
+        <div class="main-logo">MADDI</div>
+        <div class="ip-address" onclick="navigator.clipboard.writeText('maddi.lat'); alert('IP copiada: maddi.lat')">
+            ➜ maddi.lat
+        </div>
+        <div class="buttons">
+            <a href="https://discord.gg/yjC9A9rfA" target="_blank" class="btn btn-discord">
+                <i class="fab fa-discord"></i> Unirse a Discord
+            </a>
+            <a href="https://tu-server.tebex.io/" target="_blank" class="btn btn-store">
+                <i class="fas fa-shopping-cart"></i> Tienda / Tebex
+            </a>
+        </div>
+    </section>
+
+    <!-- GENTE EN LÍNEA -->
+    <div id="online-stats">
+        <div class="counter-box">
+            <span class="online-label">Jugadores en línea:</span>
+            <span class="online-num" id="player-counter">0</span>
+        </div>
+    </div>
+
+    <!-- DATA DEL SERVER & MODALIDAD -->
+    <section id="fullpvp">
+        <center><h2 class="section-title">⚔️ DATA DEL SERVER</h2></center>
+        <div class="box-grid">
+            <div class="info-card">
+                <h3>🌐 Información General</h3>
+                <p><strong>IP:</strong> maddi.lat</p>
+                <p><strong>Versión:</strong> 1.8.9 - 1.21.11</p>
+                <p><strong>Estado:</strong> <span style="color: #00ff00;">● Online</span></p>
+                <p><strong>Modalidad:</strong> Full PVP / Lobby</p>
+            </div>
+            <div class="info-card">
+                <h3>🔥 Modalidad Full PVP</h3>
+                <p>Sumérgete en la guerra total. Combates a muerte en mapas diseñados para el PVP más extremo.</p>
+                <ul style="list-style: none; margin-top: 10px; color: #aaa;">
+                    <li>✔ Kit de inicio para pelear</li>
+                    <li>✔ Sistema de Kits VIP</li>
+                    <li>✔ Estadísticas y ranking ELO</li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h3>⚡ Actualizaciones y Eventos</h3>
+                <div class="event-item">
+                    <span>🔹 Torneo Semanal de Full PVP</span>
+                    <span class="event-badge" style="background: #ff0055;">PRÓXIMO</span>
+                </div>
+                <div class="event-item">
+                    <span>🔹 Full PVP</span>
+                    <span class="event-badge" style="background: #00aaff;">ACTIVO</span>
+                </div>
+                <div class="event-item">
+                    <span>🔹 Rebalanceo de clases de combate</span>
+                    <span class="event-badge" style="background: #00ff00;">PARCHE</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TABLA DE COMPRAS (TEBEX) -->
+    <section id="store" style="background: rgba(0,0,0,0.4);">
+        <center><h2 class="section-title">💎 Últimos compradores (Tebex)</h2></center>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Jugador</th>
+                        <th>Rango/Item</th>
+                        <th>Precio</th>
+                        <th>Fecha</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <!-- Datos generados por JS -->
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer style="text-align: center; padding: 30px; border-top: 2px solid rgba(122, 0, 255, 0.3); background: rgba(12, 2, 18, 0.9);">
+        <p>© 2026 Maddi.mc | Desarrollado para la comunidad PVP</p>
+    </footer>
+
+    <!-- Enlace al archivo JS externo -->
+    <script src="jv.js"></script>
+</body>
+</html>
