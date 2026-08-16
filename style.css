@@ -31,12 +31,16 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  overflow-x: clip;
+}
 
 body {
   margin: 0;
   position: relative;
   z-index: 0;
+  min-width: 0;
   background: var(--void);
   color: var(--text);
   font-family: var(--font-body);
@@ -44,6 +48,12 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+}
+
+main {
+  position: relative;
+  min-width: 0;
+  overflow: clip;
 }
 
 img { max-width: 100%; display: block; }
@@ -95,9 +105,10 @@ textarea:focus-visible {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 25%;
+  object-position: center 28%;
   opacity: 1;
-  filter: saturate(1) contrast(1.05);
+  filter: saturate(1.06) contrast(1.08) brightness(0.9);
+  transform: scale(1.015);
 }
 
 .bg-scene__lightning {
@@ -106,39 +117,64 @@ textarea:focus-visible {
   mix-blend-mode: screen;
   opacity: 0;
   pointer-events: none;
+  will-change: opacity, filter;
+}
+
+/* Trazo dentado del rayo: aparece junto con el resplandor del cielo. */
+.bg-scene__lightning::before {
+  content: "";
+  position: absolute;
+  top: -3vh;
+  left: calc(var(--bolt-x, 50%) - 52px);
+  width: 104px;
+  height: min(58vh, 620px);
+  background: linear-gradient(180deg, #fff 0%, #dfc8ff 18%, #9a5cff 58%, rgba(102,42,190,0.2) 100%);
+  clip-path: polygon(49% 0, 61% 0, 52% 19%, 69% 25%, 49% 43%, 62% 48%, 38% 68%, 49% 73%, 25% 100%, 35% 72%, 24% 66%, 45% 47%, 32% 40%, 50% 23%, 40% 18%);
+  filter: blur(0.35px) drop-shadow(0 0 7px #fff) drop-shadow(0 0 22px #a855f7) drop-shadow(0 0 46px #6d28d9);
+  transform: rotate(var(--bolt-rotate, 0deg));
+  transform-origin: top center;
+}
+
+.bg-scene__lightning::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 48% 34% at var(--flash-x, 50%) 8%, rgba(225,205,255,0.72), rgba(133,77,255,0.22) 42%, transparent 74%);
 }
 
 .bg-scene__lightning--a {
-  background: radial-gradient(ellipse 55% 38% at 50% 12%, rgba(186, 120, 255, 0.95), rgba(124, 58, 237, 0.35) 45%, transparent 72%);
-  animation: lightning-burst-a 8s infinite;
+  --bolt-x: 67%;
+  --bolt-rotate: 8deg;
+  --flash-x: 67%;
+  animation: lightning-burst-a 7.5s infinite;
 }
 
 .bg-scene__lightning--b {
-  background: radial-gradient(ellipse 40% 30% at 22% 8%, rgba(168, 85, 247, 0.9), transparent 68%);
-  animation: lightning-burst-b 11s infinite;
-  animation-delay: 2.4s;
+  --bolt-x: 22%;
+  --bolt-rotate: -9deg;
+  --flash-x: 24%;
+  animation: lightning-burst-b 10.5s infinite;
+  animation-delay: 2.2s;
 }
 
 @keyframes lightning-burst-a {
-  0%, 88%, 100% { opacity: 0; }
-  88.4% { opacity: 1; }
-  88.7% { opacity: 0.15; }
-  89% { opacity: 0.85; }
-  89.4% { opacity: 0; }
-  93% { opacity: 0; }
-  93.3% { opacity: 0.6; }
-  93.6% { opacity: 0; }
+  0%, 61%, 100% { opacity: 0; }
+  61.5% { opacity: 0.82; }
+  62% { opacity: 0.12; }
+  62.5% { opacity: 0.96; }
+  63.2% { opacity: 0.08; }
+  64% { opacity: 0.48; }
+  65% { opacity: 0; }
 }
 
 @keyframes lightning-burst-b {
-  0%, 91%, 100% { opacity: 0; }
-  91.3% { opacity: 0.9; }
-  91.6% { opacity: 0.1; }
-  92% { opacity: 0.7; }
-  92.3% { opacity: 0; }
-  96.5% { opacity: 0; }
-  96.8% { opacity: 0.5; }
-  97.1% { opacity: 0; }
+  0%, 76%, 100% { opacity: 0; }
+  76.4% { opacity: 0.68; }
+  76.9% { opacity: 0.1; }
+  77.4% { opacity: 0.84; }
+  78.2% { opacity: 0; }
+  79% { opacity: 0.42; }
+  79.8% { opacity: 0; }
 }
 
 /* ---------- Destellos violeta/celeste sobre las armaduras del fondo ---------- */
@@ -156,23 +192,42 @@ textarea:focus-visible {
   border-radius: 50%;
   transform: translate(-50%, -50%) scale(0.7);
   mix-blend-mode: screen;
-  filter: blur(3px);
+  background: radial-gradient(circle, var(--spark-color, rgba(196,140,255,0.92)) 0 2%, rgba(255,255,255,0.54) 3%, transparent 34%);
+  filter: drop-shadow(0 0 8px var(--spark-color, #b96cff));
   opacity: 0;
   animation-name: spark-twinkle;
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
 }
 
+.spark::before,
+.spark::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.98), var(--spark-color, #c084fc), transparent);
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 8px var(--spark-color, #a855f7);
+}
+
+.spark::before { width: 44%; height: 2px; }
+.spark::after  { width: 2px; height: 44%; }
+
 @keyframes spark-twinkle {
-  0%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(0.65); }
-  50% { opacity: var(--spark-max, 0.75); transform: translate(-50%, -50%) scale(1); }
+  0%, 34%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(0.55) rotate(0deg); }
+  39% { opacity: var(--spark-max, 0.75); transform: translate(-50%, -50%) scale(1.05) rotate(12deg); }
+  44% { opacity: 0.12; transform: translate(-50%, -50%) scale(0.72) rotate(20deg); }
+  48% { opacity: calc(var(--spark-max, 0.75) * 0.78); transform: translate(-50%, -50%) scale(0.92) rotate(26deg); }
+  54% { opacity: 0; transform: translate(-50%, -50%) scale(0.62) rotate(34deg); }
 }
 
 /* violeta — lado izquierdo, donde el fondo ya tiene espadas y armaduras moradas */
 .spark--v1 {
   top: 63%; left: 7%;
   width: 150px; height: 150px;
-  background: radial-gradient(circle, rgba(196, 140, 255, 0.9) 0%, transparent 70%);
+  --spark-color: #ca8cff;
   --spark-max: 0.85;
   animation-duration: 4.5s;
   animation-delay: 0.2s;
@@ -180,7 +235,7 @@ textarea:focus-visible {
 .spark--v2 {
   top: 48%; left: 4%;
   width: 100px; height: 100px;
-  background: radial-gradient(circle, rgba(168, 85, 247, 0.85) 0%, transparent 70%);
+  --spark-color: #a855f7;
   --spark-max: 0.7;
   animation-duration: 6s;
   animation-delay: 1.8s;
@@ -188,7 +243,7 @@ textarea:focus-visible {
 .spark--v3 {
   top: 77%; left: 13%;
   width: 90px; height: 90px;
-  background: radial-gradient(circle, rgba(216, 160, 255, 0.85) 0%, transparent 70%);
+  --spark-color: #daa6ff;
   --spark-max: 0.65;
   animation-duration: 5.2s;
   animation-delay: 3.1s;
@@ -198,7 +253,7 @@ textarea:focus-visible {
 .spark--c1 {
   top: 66%; left: 91%;
   width: 140px; height: 140px;
-  background: radial-gradient(circle, rgba(120, 230, 255, 0.9) 0%, transparent 70%);
+  --spark-color: #78e6ff;
   --spark-max: 0.85;
   animation-duration: 4.8s;
   animation-delay: 0.9s;
@@ -206,7 +261,7 @@ textarea:focus-visible {
 .spark--c2 {
   top: 80%; left: 86%;
   width: 100px; height: 100px;
-  background: radial-gradient(circle, rgba(94, 210, 245, 0.85) 0%, transparent 70%);
+  --spark-color: #5ed2f5;
   --spark-max: 0.7;
   animation-duration: 5.6s;
   animation-delay: 2.5s;
@@ -214,7 +269,7 @@ textarea:focus-visible {
 .spark--c3 {
   top: 56%; left: 96%;
   width: 80px; height: 80px;
-  background: radial-gradient(circle, rgba(150, 235, 255, 0.85) 0%, transparent 70%);
+  --spark-color: #96ebff;
   --spark-max: 0.6;
   animation-duration: 4.2s;
   animation-delay: 1.3s;
@@ -399,7 +454,7 @@ textarea:focus-visible {
 
 .hero {
   position: relative;
-  min-height: 78vh;
+  min-height: min(82svh, 860px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -624,7 +679,8 @@ textarea:focus-visible {
 
 @media (max-width: 640px) {
   .ip-panel { grid-template-columns: 1fr; }
-  .ip-panel__stats { flex-direction: row; }
+  .ip-panel__stats { flex-direction: row; min-width: 0; }
+  .ip-stat { flex: 1 1 0; min-width: 0; }
 }
 
 /* ==========================================================================
@@ -632,8 +688,15 @@ textarea:focus-visible {
    ========================================================================== */
 
 .section {
-  padding: 110px 0 0;
+  padding-top: clamp(76px, 8vw, 110px);
   position: relative;
+}
+
+/* Mantiene el aire lateral incluso cuando una sección también es container. */
+.section.container {
+  width: 100%;
+  padding-right: 24px;
+  padding-left: 24px;
 }
 
 .section__eyebrow {
@@ -737,14 +800,37 @@ textarea:focus-visible {
 
 .zones {
   position: relative;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0;
+  margin-inline: auto;
   border-radius: var(--radius-lg);
   overflow: hidden;
   border: 1px solid var(--line);
+  background: #050309;
+  box-shadow: 0 24px 60px -28px rgba(0,0,0,0.9), 0 0 34px rgba(124,58,237,0.12);
 }
 
 .zones img {
   width: 100%;
   display: block;
+}
+
+.zones__video {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  background: #050309;
+}
+
+@media (max-width: 600px) {
+  .zones {
+    width: 100%;
+    border-radius: 12px;
+  }
 }
 
 .zones__caption {
@@ -890,12 +976,35 @@ textarea:focus-visible {
 }
 
 @media (max-width: 860px) {
-  .nav__toggle { display: inline-flex; align-items: center; }
+  body.nav-open { overflow: hidden; }
+  .nav {
+    padding: 11px 18px;
+    gap: 12px;
+  }
+  .nav__toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    order: 3;
+    margin-left: 0;
+    min-width: 42px;
+    min-height: 42px;
+  }
+  .nav__actions {
+    order: 2;
+    margin-left: auto;
+  }
+  .nav__actions .btn {
+    padding: 10px 16px;
+    font-size: 12px;
+  }
   .nav__links {
     position: absolute;
     top: 100%; left: 0; right: 0;
-    background: var(--deep);
+    background: rgba(12, 7, 23, 0.97);
     border-bottom: 1px solid var(--line);
+    box-shadow: 0 22px 42px rgba(0,0,0,0.52);
+    backdrop-filter: blur(18px);
     flex-direction: column;
     gap: 0;
     padding: 8px 0;
@@ -907,6 +1016,92 @@ textarea:focus-visible {
   .about-grid { grid-template-columns: 1fr; }
   .shop-cta { grid-template-columns: 1fr; text-align: center; }
   .shop-cta img { margin: 0 auto; }
+}
+
+@media (max-width: 640px) {
+  .container { padding-inline: 16px; }
+
+  .site-header { background: rgba(7,5,13,0.9); }
+  .nav { padding: 9px 14px; }
+  .nav__actions { display: none; }
+  .nav__toggle { margin-left: auto; }
+  .nav__brand img { height: 30px; }
+  .nav__brand-title { font-size: 14px; }
+
+  .hero {
+    min-height: calc(100svh - 58px);
+    padding: 90px 16px 76px;
+  }
+  .hero--compact {
+    min-height: 48svh;
+    padding-top: 92px;
+    padding-bottom: 52px;
+  }
+  .hero__content { gap: 16px; width: 100%; }
+  .hero__eyebrow { font-size: 10px; letter-spacing: 0.24em; }
+  .hero__logo { width: min(360px, 86vw); }
+  .hero__tagline { font-size: 15px; max-width: 34rem; }
+  .hero__actions {
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    gap: 11px;
+  }
+  .hero__actions .btn {
+    width: min(100%, 320px);
+    min-height: 46px;
+  }
+
+  .ip-panel { margin-top: -34px; border-radius: 14px; }
+  .ip-panel__main { padding: 18px; gap: 12px; }
+  .ip-panel__value { font-size: 18px; }
+  .ip-panel__copy { padding: 9px 13px; font-size: 11px; }
+  .ip-stat { padding: 14px 12px; }
+  .ip-stat__value { font-size: 17px; }
+
+  .section.container {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+  .section__head { margin-bottom: 34px; }
+  .section__title { font-size: clamp(24px, 8.2vw, 31px); line-height: 1.22; }
+  .section__lede { font-size: 14px; }
+  .section__eyebrow { font-size: 10px; letter-spacing: 0.23em; }
+
+  .about-grid { gap: 18px; }
+  .panel,
+  .form-panel,
+  .purchases,
+  .shop-cta { padding: 20px; }
+  .shop-cta { gap: 15px; }
+  .shop-cta img { width: 66px; height: 66px; }
+
+  .news-grid,
+  .team-grid { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+  .field-row { gap: 0; }
+
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    padding-top: 42px;
+  }
+  .footer-grid > div:first-child { grid-column: auto; }
+  .footer-bottom { flex-direction: column; align-items: flex-start; }
+  .site-footer { margin-top: 90px; }
+  .section--end { padding-bottom: 78px; }
+
+  .bg-scene__image { object-position: center 22%; }
+  .bg-scene__lightning::before { height: 44vh; width: 72px; left: calc(var(--bolt-x, 50%) - 36px); }
+  .spark { transform: translate(-50%, -50%) scale(0.6); }
+}
+
+@media (max-width: 380px) {
+  .nav__brand-ip { display: none; }
+  .btn { padding: 11px 18px; font-size: 12px; }
+  .ip-panel__main { flex-wrap: wrap; }
+  .ip-panel__copy { margin-left: auto; }
+  .ip-stat__label { font-size: 9px; }
+  .panel h3 { font-size: 16px; }
 }
 
 /* ==========================================================================
@@ -1120,7 +1315,7 @@ textarea:focus-visible {
 .pillar h4 { font-size: 15px; color: var(--gold-2); letter-spacing: 0.06em; margin-bottom: 8px; }
 .pillar p { font-size: 14px; color: var(--text-muted); }
 
-.section--end { padding-bottom: 110px; }
+.section--end { padding-bottom: clamp(78px, 8vw, 110px); }
 
 /* ==========================================================================
    PLACEHOLDER DE IMAGEN
@@ -1141,4 +1336,12 @@ textarea:focus-visible {
   font-size: 12px;
   letter-spacing: 0.06em;
   padding: 20px;
+}
+
+/* Overrides finales para componentes declarados después del bloque responsive. */
+@media (max-width: 640px) {
+  .form-panel { padding: 20px; }
+  .field-row { gap: 0; }
+  .news-grid,
+  .team-grid { grid-template-columns: minmax(0, 1fr); gap: 18px; }
 }

@@ -17,9 +17,27 @@ document.addEventListener("DOMContentLoaded", () => {
   const toggle = document.querySelector(".nav__toggle");
   const links = document.querySelector(".nav__links");
   if (toggle && links) {
-    toggle.addEventListener("click", () => {
-      const open = links.classList.toggle("is-open");
+    const setMenu = (open) => {
+      links.classList.toggle("is-open", open);
       toggle.setAttribute("aria-expanded", open ? "true" : "false");
+      toggle.setAttribute("aria-label", open ? "Cerrar menú" : "Abrir menú");
+      document.body.classList.toggle("nav-open", open);
+    };
+
+    toggle.addEventListener("click", () => {
+      setMenu(!links.classList.contains("is-open"));
+    });
+
+    links.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("click", () => setMenu(false));
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") setMenu(false);
+    });
+
+    window.addEventListener("resize", () => {
+      if (window.innerWidth > 860) setMenu(false);
     });
   }
 
