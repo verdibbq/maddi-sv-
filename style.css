@@ -737,14 +737,36 @@ textarea:focus-visible {
 
 .zones {
   position: relative;
+  width: 100%;
+  margin: 0;
   border-radius: var(--radius-lg);
   overflow: hidden;
   border: 1px solid var(--line);
+  background: #050309;
+  box-shadow: 0 24px 60px -28px rgba(0,0,0,0.9), 0 0 34px rgba(124,58,237,0.12);
 }
 
 .zones img {
   width: 100%;
   display: block;
+}
+
+.zones__video {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  background: #050309;
+}
+
+@media (max-width: 600px) {
+  .zones {
+    width: calc(100% - 32px);
+    margin-inline: auto;
+    border-radius: 12px;
+  }
 }
 
 .zones__caption {
