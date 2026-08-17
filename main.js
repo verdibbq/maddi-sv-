@@ -13,6 +13,31 @@ document.addEventListener("DOMContentLoaded", () => {
   // Cambiá esto si la IP pública final es distinta.
   const SERVER_IP = "maddi.lat";
 
+  /* ---------- Configuración de Tebex ----------
+     Public Token de la tienda (Integrations → API Keys en el panel de Tebex).
+     Es seguro tenerlo visible en el navegador: solo permite LEER datos
+     públicos de la tienda (no permite cobrar ni modificar nada).
+  */
+  const TEBEX_PUBLIC_TOKEN = "148mi-c8357ac767f14dac0f175fd7ad5a618a28c68bd0";
+
+  function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str ?? "";
+    return div.innerHTML;
+  }
+
+  async function fetchTebexSidebar() {
+    try {
+      const res = await fetch(`https://headless.tebex.io/api/accounts/${TEBEX_PUBLIC_TOKEN}/sidebar`);
+      if (!res.ok) throw new Error("Respuesta no válida del sidebar de Tebex");
+      const json = await res.json();
+      return json.data || [];
+    } catch (err) {
+      console.warn("No se pudo obtener información de Tebex:", err);
+      return [];
+    }
+  }
+
   /* ---------- Menú móvil ---------- */
   const toggle = document.querySelector(".nav__toggle");
   const links = document.querySelector(".nav__links");
@@ -154,5 +179,45 @@ document.addEventListener("DOMContentLoaded", () => {
         submitBtn.textContent = "Enviar";
       }
     });
+  }
+
+  /* ---------- Compras recientes (Tebex, en vivo) ----------
+     Muestra los últimos compradores reales de la tienda usando el módulo
+     "recent_payments" del sidebar de Tebex. Si el módulo no está habilitado
+     en la tienda, o todavía no hay compras, el cuadro se queda oculto en
+     vez de mostrar algo vacío o roto.
+  */
+  const recentBuyersBox = document.querySelector("[data-recent-buyers]");
+  if (recentBuyersBox) {
+    const list = recentBuyersBox.querySelector("[data-recent-buyers-list]");
+
+    async function renderRecentBuyers() {
+      const modules = await fetchTebexSidebar();
+      const mod = modules.find((m) => m.type === "recent_payments");
+      const payments = mod?.data?.payments || [];
+
+      if (!payments.length) {
+        recentBuyersBox.hidden = true;
+        return;
+      }
+
+      list.innerHTML = payments.slice(0, 9).map((p) => {
+        const skin = encodeURIComponent(p.username_id || p.username || "steve");
+        const itemName = p.package?.name || "";
+        const tooltip = itemName ? `${p.username} — ${itemName}` : p.username;
+        return `
+          <li class="recent-buyers__item" title="${escapeHtml(tooltip)}">
+            <span class="recent-buyers__avatar">
+              <img src="https://api.mineatar.io/head/${skin}" alt="${escapeHtml(p.username)}" loading="lazy">
+            </span>
+          </li>
+        `;
+      }).join("");
+
+      recentBuyersBox.hidden = false;
+    }
+
+    renderRecentBuyers();
+    setInterval(renderRecentBuyers, 90000); // refresca cada 90s
   }
 });
