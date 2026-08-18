@@ -70,10 +70,4 @@ Abrí `index.html` directamente, o mejor: serví la carpeta con un servidor loca
 3. Reemplazar el placeholder de "modalidad destacada" en `index.html` por una captura real del lobby/arena.
 4. Imágenes sueltas en `img/` (`discord.jpeg`, `lobby.jpeg`, `spawn.jpeg`, `evento.webp`, `discorsforo.webp`, `logo.jpeg`) todavía sin usar en ninguna página.
 
-## Cómo subir esto a tu repo
-Este zip no incluye la carpeta `.git`. Los archivos que cambiaron hoy son `index.html`, `style.css` y `main.js`. Copialos sobre tu repo local y:
-```
-git add index.html style.css main.js
-git commit -m "feat: compras recientes reales de Tebex, cuadro fijo arriba a la izquierda"
-git push
-```
+
